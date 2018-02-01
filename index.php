@@ -2,8 +2,6 @@
 
 error_reporting(E_ALL); ini_set('display_errors', '1');
 
-require "MySQLConnector.class.php";
-
 function languageAnalyze($text)
 {
 
@@ -48,32 +46,14 @@ function languageAnalyze($text)
 	return $entities;
 }
 
-$mysql = new MySQLConnector();
-$rows = $mysql->query("SELECT * from comments");
-foreach($rows as $row)
+$sentence = "The weather is nice today !";
+	
+$entities = languageAnalyze($sentence);
+
+echo "<pre>";
+foreach($entities->entities as $e)
 {
-	/* Analyze each comment */
-	$entities = languageAnalyze($row['comment']);
-
-	foreach($entities->entities as $e)
-	{
-		/* Store analysis in database */
-//		$mysql->queryNoReturn("INSERT into entities (id_comment, entity, salience, sentiment) VALUES ('".$row['id']."', '".$e->name."', '".$e->salience."', '".$e->sentiment->score."')");
-	}
+	var_dump($e);
 }
-
-/* Query the most used entities in comments */
-$rows = $mysql->query("SELECT entity, count(*) as number  FROM entities GROUP BY entity ORDER BY number DESC");
-
-echo "Most used entities :<br/>";
-echo "<ul>";
-foreach($rows as $row)
-{
-	echo "<li>".$row['entity']."(".$row['number'].")</li>";	
-}
-echo "</ul>";
-
-echo "<br/><br/>";
-echo "Finding out negative comment to fix them<br/>";
-
+echo "</pre>
 ?>
